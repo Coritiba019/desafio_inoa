@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<section class="banners banner-1 d-flex flex-column justify-content-center text-center">
+  <div class="banners-titulo bg-body-secondary py-5">
+    <h2 class="fw-bold">Transformando Alertas em Oportunidades.</h2>
+    <p>Boas-vindas ao B3Alerta! Seu assistente confiável para oportunidades na B3. Monitore, analise e aja com
+      precisão.</p>
+  </div>
+</section>
+
+<section class="py-5 container">
+  <h2 class="fw-bold text-center pb-1">Meus ativos</h2>
+  <div class="row mx-0">
+    <div class="col-12 col-md-6 col-xxl-4 pb-4">
+      <div class="card">
+        <a href="{% url 'detalhes_ativo' %}">
+          <div class="card-img-top d-flex align-items-center justify-content-center"
+            style="background-color: #868e96; height: 180px;">
+            <span class="text-white">Vazio</span>
+          </div>
+        </a>
+        <div class="card-body">
+          <h5 class="card-title">WEGE3</h5>
+          <p class="card-text fw-bold">R$150,00</p>
+          <a href="#" class="btn btn-primary">Editar Parametros</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-xxl-4 pb-4">
+      <div class="card">
+        <div class="d-flex align-items-center justify-content-center" style="height:180px; background-color: #e9ecef;">
+          <i class="bi bi-plus-circle-fill" style="font-size: 3rem; color: #868e96;"></i>
+        </div>
+        <div class="card-body text-center">
+          <h5 class="card-title">Adicionar Ativo</h5>
+          <p class="card-text">Clique para adicionar um novo ativo à sua lista.</p>
+          <a href="#" class="btn btn-primary">Adicionar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
