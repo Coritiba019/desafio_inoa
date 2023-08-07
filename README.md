@@ -2,7 +2,7 @@
 
 Este é um guia simples para clonar, configurar e executar o projeto Alura Space em seu ambiente local.
 
-## Pré-requisitos
+## 🚀 Pré-requisitos
 
 Antes de começar, verifique se você possui os seguintes requisitos instalados em seu sistema:
 
@@ -10,17 +10,19 @@ Antes de começar, verifique se você possui os seguintes requisitos instalados 
 2. Git
 3. Redis server
 
+📥 Instalação
+
 ## Clone o projeto
 ```
-git clone https://github.com/Coritiba019/alura-space.git
+git clone git@github.com:Coritiba019/desafio_inoa.git
 ```
 
-## Entre na pasta do projeto
+## Navegue até a pasta do projeto
 ```
-cd alura_space
+cd desafio_inoa
 ```
 
-## Crie o ambiente virtual
+# Configuração do Ambiente Virtual
 
 ### No Windows
 ```
@@ -30,6 +32,7 @@ python -m virtualenv .venv
 
 ### No Linux
 ```
+pip install virtualenv
 python3 -m virtualenv .venv
 ```
 
@@ -50,22 +53,45 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Inicie o projeto
-### Abra três terminais e execute os seguintes comandos
+## Configuração do Banco de Dados
+```
+python3 manage.py makemigrations
+python3 manage.py migrate
+```
+
+## Gere a Secret Key
+```
+python3 secret_key_generator.py
+```
+
+Após a geração da key, copie o conteúdo do .env.example para um novo arquivo chamado .env.
+
+## Instalação do Redis no Linux (Ubuntu)
+```
+sudo apt update
+sudo apt install redis-server
+```
+
+🚀 Execução
+
+# Abra três terminais distintos e execute os seguintes comandos em cada um deles:
+
+
+## Iniciar o servidor Django:
 ```
 python manage.py runserver
 ```
 
+## Iniciar o Celery Beat:
 ```
 celery -A setup beat -l INFO
 ```
 
+## Iniciar o Celery Worker:
 ```
 celery -A setup worker -l INFO --pool=solo
 ```
 
-Agora você pode acessar o projeto em `http://localhost:8000/` no seu navegador.
+🌐 Agora, você pode acessar o projeto pelo seu navegador no endereço http://localhost:8000/.
 
-Lembre-se de manter o terminal aberto enquanto o projeto estiver em execução. Você pode parar o servidor pressionando `Ctrl+C` no terminal.
-
-Espero que essas instruções tenham sido úteis! Se você seguiu os passos corretamente, o projeto Alura Space deve estar rodando em seu ambiente local. Se tiver alguma dúvida, sinta-se à vontade para perguntar!
+💡 Dica: Mantenha os terminais abertos enquanto estiver usando o projeto. Para encerrar, pressione Ctrl+C.
