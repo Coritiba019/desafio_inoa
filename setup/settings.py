@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.monitoramento',
     'apps.usuarios',
+    'django_celery_results',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +129,33 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CELERY SETTINGS
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'America/Sao_Paulo'
+
+CELERY_RESULT_BACKEND = 'django-db'
+
+# CELERY BEAT
+
+CELERY_BEAT_SCHEDULE = {
+    'monitoramento': {
+        'task': 'apps.monitoramento.tasks.checar_cotacoes',
+        'schedule': timedelta(seconds=60),
+    },
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# SMTP Settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "yfabiodias85@gmail.com"
+EMAIL_HOST_PASSWORD = "kpfmasstthbzrpys"
+DEFAULT_FROM_EMAIL = 'Celery <yfabiodias85@gmail.com>'

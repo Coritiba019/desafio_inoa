@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from apps.monitoramento.models import Ativo
 from apps.monitoramento.forms import AtivoForms
 import yfinance as yf
+from .tasks import checar_cotacoes
 
 MAPEAMENTO_SETORES = {
     "Consumer Cyclical": "CONSUMER_CYCLICAL",
@@ -83,3 +84,7 @@ def get_ativo_info(request, ativo_id):
         "periodicidade_checagem": str(ativo.periodicidade_checagem),
     }
     return JsonResponse(data)
+
+def test(request):
+    checar_cotacoes.delay()
+    return HttpResponse("Done")
