@@ -1,6 +1,6 @@
 # B3Alerta - Guia de Instalação e Execução
 
-## Este é um guia simples para clonar, configurar e executar o projeto Alura Space em seu ambiente local.
+### Este é um guia simples para clonar, configurar e executar o projeto B3Alerta em seu ambiente local.
 
 # 🚀 Pré-requisitos
 
@@ -22,7 +22,7 @@ git clone git@github.com:Coritiba019/desafio_inoa.git
 cd desafio_inoa
 ```
 
-# Configuração do Ambiente Virtual
+## Configuração do Ambiente Virtual
 
 ### No Windows
 ```
@@ -74,7 +74,7 @@ sudo apt install redis-server
 
 # 🚀 Execução
 
-# Abra três terminais distintos e execute os seguintes comandos em cada um deles:
+## Abra três terminais distintos e execute os seguintes comandos em cada um deles:
 
 
 ## Iniciar o servidor Django:
@@ -92,6 +92,6 @@ celery -A setup beat -l INFO
 celery -A setup worker -l INFO --pool=solo
 ```
 
-## 🌐 Agora, você pode acessar o projeto pelo seu navegador no endereço http://localhost:8000/.
+### 🌐 Agora, você pode acessar o projeto pelo seu navegador no endereço http://localhost:8000/.
 
-## 💡 Dica: Mantenha os terminais abertos enquanto estiver usando o projeto. Para encerrar, pressione Ctrl+C.
+### 💡 Dica: Mantenha os terminais abertos enquanto estiver usando o projeto. Para encerrar, pressione Ctrl+C.
