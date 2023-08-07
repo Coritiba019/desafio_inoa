@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+from django.utils import timezone
 from django.contrib.auth.models import User
 
 class Ativo(models.Model):
@@ -25,7 +26,7 @@ class Ativo(models.Model):
     limite_inferior = models.DecimalField(max_digits=10, decimal_places=2, help_text="", null=True, blank=True)
     limite_superior = models.DecimalField(max_digits=10, decimal_places=2, help_text="", null=True, blank=True)
     periodicidade_checagem = models.PositiveIntegerField(help_text="Periodicidade da checagem em minutos", null=True, blank=True)
-    ultima_atualizacao = models.DateTimeField(null=True, blank=True, help_text="Data e hora da última atualização do preço", default=datetime.now)
+    ultima_atualizacao = models.DateTimeField(null=True, blank=True, help_text="Data e hora da última atualização do preço", default=timezone.now)
     usuario = models.ForeignKey(
         to=User,
         on_delete=models.CASCADE,
