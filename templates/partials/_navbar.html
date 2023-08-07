@@ -15,15 +15,21 @@
             </div>
             <div class="offcanvas-body">
                 <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Início</a>
+                        <a class="nav-link" href="#">Olá, {{ user.username }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Sobre</a>
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#contato">Contato</a>
+                        <a class="nav-link" href="{% url 'cadastro' %}">Registro</a>
                     </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             <div class="form-check form-switch">

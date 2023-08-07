@@ -1,8 +1,8 @@
 from django.contrib import admin
-from monitoramento.models import Ativo
+from apps.monitoramento.models import Ativo
 
 class ListandoAtivos(admin.ModelAdmin):
-    list_display = ('id', 'codigo', 'nome', 'preco_atual', 'setor', 'ultima_atualizacao',)
+    list_display = ('id', 'codigo', 'nome', 'preco_atual', 'setor', 'ultima_atualizacao', 'usuario')
     list_display_links = ('id', 'codigo',)
     search_fields = ('codigo', 'nome',)
     list_filter = ('setor',)

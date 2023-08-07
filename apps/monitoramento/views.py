@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
-from monitoramento.models import Ativo
-from monitoramento.forms import AtivoForms
+from apps.monitoramento.models import Ativo
+from apps.monitoramento.forms import AtivoForms
 import yfinance as yf
 
 MAPEAMENTO_SETORES = {
@@ -19,16 +19,26 @@ MAPEAMENTO_SETORES = {
 }
 
 def index(request):
-    ativos = Ativo.objects.all().order_by('-id')
+    if request.user.is_authenticated:
+        # Se o usuário estiver logado, obtenha seus ativos
+        ativos = Ativo.objects.filter(usuario=request.user).order_by('-id')
+    else:
+        # Se o usuário não estiver logado, não mostre nenhum ativo
+        ativos = []
+
     form = AtivoForms()
 
     return render(request, 'index.html', {'cards': ativos, 'form': form})
+
 
 def detalhes_ativo(request, ativo_id):
     ativo = get_object_or_404(Ativo, pk=ativo_id)
     return render(request, 'detalhes_ativo.html', {'ativo': ativo})
 
 def novo_ativo(request):
+    if not request.user.is_authenticated:
+        return redirect('login')  # ou alguma outra resposta caso o usuário não esteja logado
+
     form = AtivoForms(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
@@ -39,6 +49,9 @@ def novo_ativo(request):
         ativo.nome = ticker_data.info.get('longName', None)
         ativo.setor = MAPEAMENTO_SETORES.get(ticker_data.info.get('sector'), None)
         ativo.descricao = ticker_data.info.get('longBusinessSummary', None)
+
+        # Vincula o usuário logado ao ativo
+        ativo.usuario = request.user
         
         ativo.save()
         return redirect('index')

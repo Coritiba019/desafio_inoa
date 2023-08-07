@@ -12,45 +12,50 @@
 <section class="py-5 container">
   <h2 class="fw-bold text-center pb-1">Meus ativos</h2>
   <div class="row mx-0">
-    {% if cards %}
-    {% for ativo in cards %}
-    <div class="col-12 col-md-6 col-xxl-4 pb-4">
-      <div class="card">
-        <a href="{% url 'detalhes_ativo' ativo.id %}">
-          <div class="card-img-top d-flex align-items-center justify-content-center"
-            style="background-color: #868e96; height: 180px;">
-            <span class="text-white fw-bold">{{ativo.codigo}}</span>
+      <!-- Renderização dos ativos -->
+      {% for ativo in cards %}
+      <div class="col-12 col-md-6 col-xxl-4 pb-4">
+          <div class="card">
+              <a href="{% url 'detalhes_ativo' ativo.id %}">
+                  <div class="card-img-top d-flex align-items-center justify-content-center"
+                      style="background-color: #868e96; height: 180px;">
+                      <span class="text-white fw-bold">{{ativo.codigo}}</span>
+                  </div>
+              </a>
+              <div class="card-body">
+                  <h5 class="card-title">{{ ativo.get_setor_display }}</h5>
+                  <p class="card-text fw-bold">R$ {{ativo.preco_atual}}</p>
+                  <!-- Campo para mostrar a última atualização -->
+                  <p class="card-text text-muted">Última atualização: {{ ativo.ultima_atualizacao|date:"d/m/Y H:i" }}</p>
+                  <a href="#" class="btn btn-primary" data-ativo-id="{{ativo.id}}" data-bs-toggle="modal"
+                      data-bs-target="#editAtivoModal" onclick="prepareEdit('{{ ativo.id }}')">Editar</a>
+                  <a href="#" class="btn btn-danger" data-ativo-id="{{ativo.id}}" data-ativo-nome="{{ativo.codigo}}"
+                      data-bs-toggle="modal" data-bs-target="#deleteModal"
+                      onclick="prepareDeletion('{{ ativo.id }}', '{{ ativo.codigo }}')">Excluir</a>
+              </div>
           </div>
-        </a>
-        <div class="card-body">
-          <h5 class="card-title">{{ ativo.get_setor_display }}</h5>
-          <p class="card-text fw-bold">R$ {{ativo.preco_atual}}</p>
-          <a href="#" class="btn btn-primary" data-ativo-id="{{ativo.id}}" data-bs-toggle="modal"
-            data-bs-target="#editAtivoModal" onclick="prepareEdit('{{ ativo.id }}')">Editar</a>
-          <a href="#" class="btn btn-danger" data-ativo-id="{{ativo.id}}" data-ativo-nome="{{ativo.codigo}}"
-            data-bs-toggle="modal" data-bs-target="#deleteModal"
-            onclick="prepareDeletion('{{ ativo.id }}', '{{ ativo.codigo }}')">Excluir</a>
-        </div>
       </div>
-    </div>
-    {% endfor %}
-    {% else %}
-    {% endif %}
-    <div class="col-12 col-md-6 col-xxl-4 pb-4">
-      <div class="card">
-        <div class="d-flex align-items-center justify-content-center" style="height:180px; background-color: #e9ecef;">
-          <i class="bi bi-plus-circle-fill" style="font-size: 3rem; color: #868e96;"></i>
-        </div>
-        <div class="card-body text-center">
-          <h5 class="card-title">Adicionar Ativo</h5>
-          <p class="card-text">Clique para adicionar um novo ativo à sua lista.</p>
-          <!-- Link para o modal de adição de ativo -->
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAtivoModal">
-            Adicionar
-          </button>
-        </div>
+      {% endfor %}
+
+      <!-- Opção de adicionar ativo -->
+      {% if user.is_authenticated %}
+      <div class="col-12 col-md-6 col-xxl-4 pb-4">
+          <div class="card">
+              <div class="d-flex align-items-center justify-content-center" style="height:180px; background-color: #e9ecef;">
+                  <i class="bi bi-plus-circle-fill" style="font-size: 3rem; color: #868e96;"></i>
+              </div>
+              <div class="card-body text-center">
+                  <h5 class="card-title">Adicionar Ativo</h5>
+                  <p class="card-text">Clique para adicionar um novo ativo à sua lista.</p>
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAtivoModal">
+                      Adicionar
+                  </button>
+              </div>
+          </div>
       </div>
-    </div>
+      {% else %}
+      <p class="text-center">Por favor, <a href="{% url 'login' %}">faça login</a> para adicionar ativos.</p>
+      {% endif %}
   </div>
 </section>
 

@@ -1,5 +1,5 @@
 from django.urls import path
-from monitoramento.views import index, detalhes_ativo, novo_ativo, editar_ativo, deletar_ativo, get_ativo_info
+from apps.monitoramento.views import index, detalhes_ativo, novo_ativo, editar_ativo, deletar_ativo, get_ativo_info
 
 urlpatterns = [
     path('', index, name='index'),
