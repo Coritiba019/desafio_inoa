@@ -8,7 +8,7 @@ Antes de começar, verifique se você possui os seguintes requisitos instalados 
 
 1. Python (versão 3.6 ou superior)
 2. Git
-3. Redis
+3. Redis server
 
 ## Clone o projeto
 ```
@@ -51,6 +51,7 @@ pip install -r requirements.txt
 ```
 
 ## Inicie o projeto
+### Abra três terminais e execute os seguintes comandos
 ```
 python manage.py runserver
 ```
