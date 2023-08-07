@@ -20,15 +20,6 @@
           <div class="card-img-top d-flex flex-column align-items-center justify-content-center"
             style="background-color: #868e96; height: 180px;">
             <span class="text-white fw-bold">{{ ativo.codigo }}</span>
-            {% if ativo.variation %}
-            {% if ativo.variation >= 0 %}
-            <span class="text-success">+ {{ ativo.variation }}</span>
-            {% else %}
-            <span class="text-danger">- {{ ativo.variation }}</span>
-            {% endif %}
-            {% else %}
-            <span class="text-muted">N/A</span>
-            {% endif %}
           </div>
         </a>
         <div class="card-body">
@@ -191,13 +182,13 @@
             // Atualizar a data da última atualização
             const dateElement = ativoElement.querySelector('.card-text.text-muted');
             if (dateElement) {
-              dateElement.textContent = `Última atualização: ${ativoData.ultima_atualizacao}`;
+              dateElement.textContent = `${ativoData.ultima_atualizacao}`;
             }
           }
         }
       });
   }
   // Chame essa função a cada minuto
-  setInterval(fetchUpdatedAtivosData, 30000);
+  setInterval(fetchUpdatedAtivosData, 10000);
 </script>
 {% endblock %}

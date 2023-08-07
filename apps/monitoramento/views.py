@@ -6,6 +6,7 @@ import yfinance as yf
 from .tasks import checar_cotacoes
 from django.contrib import messages
 from django.utils.dateformat import format
+import re
 
 MAPEAMENTO_SETORES = {
     "Consumer Cyclical": "CONSUMER_CYCLICAL",
@@ -61,6 +62,10 @@ def novo_ativo(request):
     form = AtivoForms(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
+        if not is_valid_ticker(form.cleaned_data['codigo']):
+            messages.error(request, "Código do ticker inválido.")
+            return redirect('index')
+
         ticker_data = yf.Ticker(form.cleaned_data['codigo'] + ".SA")
 
         if not ticker_data.info:
@@ -128,3 +133,7 @@ def get_updated_ativos(request):
         }
 
     return JsonResponse(data)
+
+def is_valid_ticker(ticker):
+    pattern = re.compile(r'^[A-Z]{4}.{1,}$')
+    return bool(pattern.match(ticker))
