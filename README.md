@@ -1,8 +1,8 @@
 # B3Alerta - Guia de Instalação e Execução
 
-Este é um guia simples para clonar, configurar e executar o projeto Alura Space em seu ambiente local.
+## Este é um guia simples para clonar, configurar e executar o projeto Alura Space em seu ambiente local.
 
-## 🚀 Pré-requisitos
+# 🚀 Pré-requisitos
 
 Antes de começar, verifique se você possui os seguintes requisitos instalados em seu sistema:
 
@@ -10,7 +10,7 @@ Antes de começar, verifique se você possui os seguintes requisitos instalados 
 2. Git
 3. Redis server
 
-📥 Instalação
+# 📥 Instalação
 
 ## Clone o projeto
 ```
@@ -72,7 +72,7 @@ sudo apt update
 sudo apt install redis-server
 ```
 
-🚀 Execução
+# 🚀 Execução
 
 # Abra três terminais distintos e execute os seguintes comandos em cada um deles:
 
@@ -92,6 +92,6 @@ celery -A setup beat -l INFO
 celery -A setup worker -l INFO --pool=solo
 ```
 
-🌐 Agora, você pode acessar o projeto pelo seu navegador no endereço http://localhost:8000/.
+## 🌐 Agora, você pode acessar o projeto pelo seu navegador no endereço http://localhost:8000/.
 
-💡 Dica: Mantenha os terminais abertos enquanto estiver usando o projeto. Para encerrar, pressione Ctrl+C.
+## 💡 Dica: Mantenha os terminais abertos enquanto estiver usando o projeto. Para encerrar, pressione Ctrl+C.
