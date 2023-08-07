@@ -29,13 +29,13 @@ def checar_cotacoes(self):
             if preco_atual < ativo.limite_inferior:
                 send_notification_email(
                     subject='Notificação de Compra',
-                    message=f'O preço de {ativo.codigo} caiu abaixo do limite! Atual: {preco_atual}, Limite: {ativo.limite_inferior}. Considere comprar.',
+                    message=f'O preço de {ativo.codigo} caiu abaixo do limite! Atual: {preco_atual:.2f}, Limite: {ativo.limite_inferior}. Considere comprar.',
                     email=user_email
                 )
             elif preco_atual > ativo.limite_superior:
                 send_notification_email(
                     subject='Notificação de Venda',
-                    message=f'O preço de {ativo.codigo} subiu acima do limite! Atual: {preco_atual}, Limite: {ativo.limite_superior}. Considere vender.',
+                    message=f'O preço de {ativo.codigo} subiu acima do limite! Atual: {preco_atual:.2f}, Limite: {ativo.limite_superior}. Considere vender.',
                     email=user_email
                 )
 
