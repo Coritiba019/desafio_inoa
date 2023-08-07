@@ -19,7 +19,7 @@
         rel="stylesheet">
 </head>
 
-<body data-bs-theme="light">
+<body data-bs-theme="dark">
 
     <header>
         {% include 'partials/_navbar.html' %}
@@ -35,6 +35,8 @@
         integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
         crossorigin="anonymous"></script>
     <script src="{% static 'script.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
 </body>
 
 </html>
