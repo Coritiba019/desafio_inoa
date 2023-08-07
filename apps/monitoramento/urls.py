@@ -1,5 +1,5 @@
 from django.urls import path
-from apps.monitoramento.views import index, detalhes_ativo, novo_ativo, editar_ativo, deletar_ativo, get_ativo_info, test
+from apps.monitoramento.views import index, detalhes_ativo, novo_ativo, editar_ativo, deletar_ativo, get_ativo_info, test, get_updated_ativos
 
 urlpatterns = [
     path('', index, name='index'),
@@ -8,5 +8,6 @@ urlpatterns = [
     path('editar_ativo/<int:ativo_id>/', editar_ativo, name='editar_ativo'),
     path('deletar_ativo/<int:ativo_id>', deletar_ativo, name='deletar_ativo'),
     path('get_ativo_info/<int:ativo_id>/', get_ativo_info, name='get_ativo_info'),
-    path('test', test, name='test')
+    path('test', test, name='test'),
+    path('api/updated_ativos/', get_updated_ativos, name='get_updated_ativos'),
 ]

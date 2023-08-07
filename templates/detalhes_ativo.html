@@ -1,9 +1,42 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
-<section class="banners d-flex flex-column justify-content-center text-center">
-  <div class="banners-titulo bg-body-secondary py-5">
-    <p>{{ ativo.codigo }}</p>
+<section class="container justify-content-center text-center" style="margin-top: 150px; margin-bottom: 150px;">
+  <h2>{{ ativo.codigo }}</h2>
+  
+  <!-- Chart Container -->
+  <div class="chart-container d-flex justify-content-center align-items-center" style="height: 60vh; width: 90vw;">
+      <canvas id="ativoChart"></canvas>
   </div>
+
 </section>
+
+<script>
+    // Parsing data from Django template to JS
+    let dates = {{ dates|safe }};
+    let pricesData = {{ prices|safe }};
+
+    var ctx = document.getElementById('ativoChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: '{{ ativo.codigo }} - 1 Year History',
+                data: pricesData,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}

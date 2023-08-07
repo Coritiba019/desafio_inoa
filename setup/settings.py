@@ -145,7 +145,7 @@ CELERY_RESULT_BACKEND = 'django-db'
 CELERY_BEAT_SCHEDULE = {
     'monitoramento': {
         'task': 'apps.monitoramento.tasks.checar_cotacoes',
-        'schedule': timedelta(seconds=60),
+        'schedule': timedelta(seconds=30),
     },
 }
 

@@ -175,6 +175,4 @@ cython_debug/
 
 # Celery
 
-*.bak
-*.dat
-*.dir
+celerybeat-schedule*

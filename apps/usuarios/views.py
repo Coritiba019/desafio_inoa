@@ -45,6 +45,10 @@ def cadastro(request):
                 messages.error(request, 'Nome de usuário já existe!')
                 return redirect('cadastro')
             
+            if User.objects.filter(email=email).exists():
+                messages.error(request, 'E-mail já está registrado!')
+                return redirect('cadastro')
+            
             usuario = User.objects.create_user(
                 username=nome,
                 email=email,
@@ -55,7 +59,7 @@ def cadastro(request):
             messages.success(request, f'{nome} cadastrado com sucesso!')
             return redirect('login')
 
-    return render(request, 'usuarios/cadastro.html', {'form': form, 'fixed_footer': True})
+    return render(request, 'usuarios/cadastro.html', {'form': form, 'fixed_footer': True}) 
 
 def logout(request):
     auth.logout(request)

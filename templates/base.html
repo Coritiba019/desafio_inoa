@@ -17,6 +17,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Barlow:wght@400;600&display=swap"
         rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body data-bs-theme="dark">
@@ -37,6 +38,34 @@
     <script src="{% static 'script.js' %}"></script>
 
     {% block extra_js %}{% endblock %}
+
+    {% if messages %}
+    <!-- Modal -->
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalLabel">Messages</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if messages %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var messageModal = new bootstrap.Modal(document.getElementById('messageModal'), {});
+            messageModal.show();
+        });
+    </script>
+    {% endif %}
 </body>
 
 </html>

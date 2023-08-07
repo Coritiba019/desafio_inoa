@@ -4,6 +4,8 @@ from apps.monitoramento.models import Ativo
 from apps.monitoramento.forms import AtivoForms
 import yfinance as yf
 from .tasks import checar_cotacoes
+from django.contrib import messages
+from django.utils.dateformat import format
 
 MAPEAMENTO_SETORES = {
     "Consumer Cyclical": "CONSUMER_CYCLICAL",
@@ -34,46 +36,70 @@ def index(request):
 
 def detalhes_ativo(request, ativo_id):
     ativo = get_object_or_404(Ativo, pk=ativo_id)
-    return render(request, 'detalhes_ativo.html', {'ativo': ativo})
+    
+    # Fetch data using yfinance
+    ticker = yf.Ticker(ativo.codigo + ".SA")
+    history = ticker.history(period="1y")  # Get data for 1 year, for instance.
+
+    dates = history.index.strftime('%Y-%m-%d').tolist()
+    prices = history['Close'].tolist()
+
+    # Prepare context data
+    context = {
+        'ativo': ativo,
+        'dates': dates,
+        'prices': prices
+    }
+
+    return render(request, 'detalhes_ativo.html', context)
 
 def novo_ativo(request):
     if not request.user.is_authenticated:
-        return redirect('login')  # ou alguma outra resposta caso o usuário não esteja logado
+        messages.error(request, "Você precisa estar logado para adicionar um ativo.")
+        return redirect('login')
 
     form = AtivoForms(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
         ticker_data = yf.Ticker(form.cleaned_data['codigo'] + ".SA")
+
+        if not ticker_data.info:
+            messages.error(request, "Erro ao buscar informações do ativo.")
+            return redirect('index')
         
         ativo = form.save(commit=False)
         ativo.preco_atual = ticker_data.history(period="1d")['Close'].iloc[0]
         ativo.nome = ticker_data.info.get('longName', None)
         ativo.setor = MAPEAMENTO_SETORES.get(ticker_data.info.get('sector'), None)
         ativo.descricao = ticker_data.info.get('longBusinessSummary', None)
-
-        # Vincula o usuário logado ao ativo
         ativo.usuario = request.user
-        
         ativo.save()
-        return redirect('index')
+        messages.success(request, f"O Ativo {ativo.codigo} foi adicionado com sucesso!")
+    else:
+        messages.error(request, "Erro ao adicionar o ativo. Por favor, tente novamente.")
+
+    return redirect('index')
 
 def deletar_ativo(request, ativo_id):
     if request.method == "POST":
         ativo = get_object_or_404(Ativo, id=ativo_id)
+        ativo_nome = ativo.nome
         ativo.delete()
+        messages.success(request, f"Ativo {ativo_nome} deletado com sucesso!")
         return redirect('index')
 
 def editar_ativo(request, ativo_id):
-    # Busca o ativo pelo ID ou lança uma exceção 404 se não for encontrado
     ativo = get_object_or_404(Ativo, id=ativo_id)
     
-    # Se a requisição for POST, tentamos atualizar o ativo
     if request.method == "POST":
-        form = AtivoForms(request.POST, instance=ativo)  # passamos a instância do ativo para atualizar o objeto existente
+        form = AtivoForms(request.POST, instance=ativo)
         
         if form.is_valid():
             form.save()
+            messages.success(request, f"Ativo {ativo.nome} editado com sucesso!")
             return redirect('index')
+        else:
+            messages.error(request, "Erro ao editar o ativo. Por favor, tente novamente.")
         
 def get_ativo_info(request, ativo_id):
     ativo = get_object_or_404(Ativo, id=ativo_id)
@@ -87,4 +113,18 @@ def get_ativo_info(request, ativo_id):
 
 def test(request):
     checar_cotacoes.delay()
+    messages.info(request, "A tarefa de checar cotações foi iniciada.")
     return HttpResponse("Done")
+
+def get_updated_ativos(request):
+    ativos = Ativo.objects.all()
+    data = {}
+    
+    for ativo in ativos:
+        formatted_date = format(ativo.ultima_atualizacao, "d/m/Y H:i")
+        data[ativo.id] = {
+            'preco_atual': ativo.preco_atual,
+            'ultima_atualizacao': f"Última atualização: {formatted_date}"
+        }
+
+    return JsonResponse(data)

@@ -15,16 +15,25 @@
     <!-- Renderização dos ativos -->
     {% for ativo in cards %}
     <div class="col-12 col-md-6 col-xxl-4 pb-4">
-      <div class="card">
+      <div class="card" data-id-ativo-card="{{ ativo.id }}">
         <a href="{% url 'detalhes_ativo' ativo.id %}">
-          <div class="card-img-top d-flex align-items-center justify-content-center"
+          <div class="card-img-top d-flex flex-column align-items-center justify-content-center"
             style="background-color: #868e96; height: 180px;">
-            <span class="text-white fw-bold">{{ativo.codigo}}</span>
+            <span class="text-white fw-bold">{{ ativo.codigo }}</span>
+            {% if ativo.variation %}
+            {% if ativo.variation >= 0 %}
+            <span class="text-success">+ {{ ativo.variation }}</span>
+            {% else %}
+            <span class="text-danger">- {{ ativo.variation }}</span>
+            {% endif %}
+            {% else %}
+            <span class="text-muted">N/A</span>
+            {% endif %}
           </div>
         </a>
         <div class="card-body">
           <h5 class="card-title">{{ ativo.get_setor_display }}</h5>
-          <p class="card-text fw-bold">R$ {{ativo.preco_atual}}</p>
+          <p class="card-text fw-bold">R$ {{ ativo.preco_atual }}</p>
           <!-- Campo para mostrar a última atualização -->
           <p class="card-text text-muted">Última atualização: {{ ativo.ultima_atualizacao|date:"d/m/Y H:i" }}</p>
           <a href="#" class="btn btn-primary" data-ativo-id="{{ativo.id}}" data-bs-toggle="modal"
@@ -164,5 +173,31 @@
     var form = document.getElementById('editAtivoForm');
     form.action = `/editar_ativo/${ativoId}/`;
   }
+  function fetchUpdatedAtivosData() {
+    fetch('/api/updated_ativos/')
+      .then(response => response.json())
+      .then(data => {
+        for (const [id, ativoData] of Object.entries(data)) {
+          // Encontrar o elemento do ativo pelo ID
+          const ativoElement = document.querySelector(`.card[data-id-ativo-card="${id}"]`);
+
+          if (ativoElement) {
+            // Atualizar o preço
+            const priceElement = ativoElement.querySelector('.card-text.fw-bold');
+            if (priceElement) {
+              priceElement.textContent = `R$ ${ativoData.preco_atual}`;
+            }
+
+            // Atualizar a data da última atualização
+            const dateElement = ativoElement.querySelector('.card-text.text-muted');
+            if (dateElement) {
+              dateElement.textContent = `Última atualização: ${ativoData.ultima_atualizacao}`;
+            }
+          }
+        }
+      });
+  }
+  // Chame essa função a cada minuto
+  setInterval(fetchUpdatedAtivosData, 30000);
 </script>
 {% endblock %}
