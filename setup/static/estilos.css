@@ -22,14 +22,6 @@ input[type=checkbox]:focus {
   background-image: url(./assets/investir-em-ouro.jpg);
 }
 
-.banner-2 {
-  background-image: url(./assets/banner-2.png);
-}
-
-.banner-3 {
-  background-image: url(./assets/banner-3.png);
-}
-
 .banners {
   width: 100%;
   height: 100vh;
