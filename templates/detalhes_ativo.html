@@ -2,41 +2,94 @@
 {% load static %}
 
 {% block content %}
-<section class="container justify-content-center text-center" style="margin-top: 150px; margin-bottom: 150px;">
-  <h2>{{ ativo.codigo }}</h2>
-  
-  <!-- Chart Container -->
-  <div class="chart-container d-flex justify-content-center align-items-center" style="height: 60vh; width: 90vw;">
-      <canvas id="ativoChart"></canvas>
-  </div>
+<section class="container d-flex flex-column justify-content-center align-items-center" style="height: 100vh;">
+    <div class="text-center mt-5"
+        style="width: 100%; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+        <h2 style="margin-top: 6rem;">{{ ativo.codigo }}</h2>
 
+        <!-- Buttons for selecting date ranges -->
+        <div class="btn-group" role="group" aria-label="Date Range Selectors">
+            <button type="button" class="btn btn-secondary" data-range="5d">5 Dias</button>
+            <button type="button" class="btn btn-secondary" data-range="30d">30 Dias</button>
+            <button type="button" class="btn btn-secondary" data-range="6m">6 Meses</button>
+            <button type="button" class="btn btn-secondary" data-range="1y">1 Ano</button>
+            <button type="button" class="btn btn-secondary" data-range="5y">5 Anos</button>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="container d-flex justify-content-center align-items-center mt-3"
+            style="height: 60vh; width: 90vw; margin: 0; padding: 0;">
+            <canvas id="ativoChart" style="margin: 0; padding: 0;"></canvas>
+        </div>
+    </div>
 </section>
 
 <script>
     // Parsing data from Django template to JS
-    let dates = {{ dates|safe }};
-    let pricesData = {{ prices|safe }};
-
-    var ctx = document.getElementById('ativoChart').getContext('2d');
-    var myChart = new Chart(ctx, {
+    const dates = {{ dates| safe }};
+    const pricesData = {{ prices| safe }};
+    const ctx = document.getElementById('ativoChart').getContext('2d');
+    let myChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: dates,
             datasets: [{
-                label: '{{ ativo.codigo }} - 1 Year History',
+                label: '{{ ativo.codigo }} - 1 Ano',
                 data: pricesData,
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
-                fill: false
+                fill: false,
+                pointRadius: 1,
+                showLine: true
             }]
         },
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
                 }
             }
         }
     });
+
+    document.querySelectorAll('.btn-group .btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const range = this.getAttribute('data-range');
+            fetchDataAndUpdateChart(range);
+        });
+    });
+
+    const rangeLabels = {
+        '1d': '1 Dia',
+        '5d': '5 Dias',
+        '30d': '30 Dias',
+        '6m': '6 Meses',
+        '1y': '1 Ano',
+        '5y': '5 Anos'
+    };
+
+    function fetchDataAndUpdateChart(range) {
+        fetch(`/api/data/{{ ativo.codigo }}/${range}/`)
+            .then(response => response.json())
+            .then(data => {
+                const minValue = Math.min(...data.prices) - 1;
+                const maxValue = Math.max(...data.prices) + 1;
+
+                // Update chart data and options
+                myChart.data.labels = data.dates;
+                myChart.data.datasets[0].data = data.prices;
+                myChart.data.datasets[0].label = '{{ ativo.codigo }} - ' + rangeLabels[range];
+                myChart.options.scales.y.min = minValue;
+                myChart.options.scales.y.max = maxValue;
+
+                myChart.update();
+            });
+    }
+
+    // Call the function with default range to set min/max values initially
+    fetchDataAndUpdateChart('1y');
 </script>
 {% endblock %}

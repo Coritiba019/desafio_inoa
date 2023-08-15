@@ -137,3 +137,28 @@ def get_updated_ativos(request):
 def is_valid_ticker(ticker):
     pattern = re.compile(r'^[A-Z]{4}.{1,}$')
     return bool(pattern.match(ticker))
+
+def get_dates_and_prices_for_range(codigo, range):
+    ticker = yf.Ticker(codigo + ".SA")
+    history = ticker.history(period=range)
+    dates = history.index.strftime('%Y-%m-%d').tolist()
+    prices = history['Close'].tolist()
+    return dates, prices
+
+def get_data(request, codigo, range):
+    # Convertir a entrada range em formato yfinance
+    period_map = {
+        "5d": "5d",
+        "30d": "1mo",
+        "6m": "6mo",
+        "1y": "1y",
+        "5y": "5y"
+    }
+
+    period = period_map.get(range, "1y")  # Default para 1 ano se a entrada não for válida
+    dates, prices = get_dates_and_prices_for_range(codigo, period)
+    
+    return JsonResponse({
+        'dates': dates,
+        'prices': prices
+    })
