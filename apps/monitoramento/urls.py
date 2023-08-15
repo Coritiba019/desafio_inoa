@@ -1,5 +1,5 @@
 from django.urls import path
-from apps.monitoramento.views import index, detalhes_ativo, novo_ativo, editar_ativo, deletar_ativo, get_ativo_info, test, get_updated_ativos, get_data
+from apps.monitoramento.views import index, detalhes_ativo, novo_ativo, editar_ativo, deletar_ativo, get_ativo_info, test, get_updated_ativos, get_data, get_financial_indicators
 
 urlpatterns = [
     path('', index, name='index'),
@@ -11,4 +11,5 @@ urlpatterns = [
     path('test', test, name='test'),
     path('api/updated_ativos/', get_updated_ativos, name='get_updated_ativos'),
     path('api/data/<str:codigo>/<str:range>/', get_data, name='get_data'),
+    path('api/get_financial_indicators/<str:ticker_symbol>/', get_financial_indicators, name='valuation_measures'),
 ]

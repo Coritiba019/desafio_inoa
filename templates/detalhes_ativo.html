@@ -24,6 +24,107 @@
     </div>
 </section>
 
+
+<section class="container mt-5">
+    <h2 class="text-center mb-4">Indicadores da {{ ativo.codigo }}</h2>
+
+    <div class="row">
+
+        <!-- Indicadores de Valuation -->
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    Indicadores de Valuation
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Valor de Mercado: <span id="marketCap">--</span></li>
+                    <li class="list-group-item">Valor da Empresa (Enterprise Value): <span
+                            id="enterpriseValue">--</span></li>
+                    <li class="list-group-item">P/L (Passado): <span id="trailingPE">--</span></li>
+                    <li class="list-group-item">P/L (Futuro): <span id="forwardPE">--</span></li>
+                    <li class="list-group-item">PEG Ratio: <span id="pegRatio">--</span></li>
+                    <li class="list-group-item">Preço/Receita: <span id="priceToSalesTrailing12Months">--</span></li>
+                    <li class="list-group-item">Preço/Valor Patrimonial (P/VP): <span id="priceToBook">--</span></li>
+                    <li class="list-group-item">Taxa de Dividendos (Dividend Rate): <span id="dividendRate">--</span>
+                    </li>
+                    <li class="list-group-item">Rendimento de Dividendos (Dividend Yield): <span
+                            id="dividendYield">--</span></li>
+                    <li class="list-group-item">Rendimento Médio de Dividendos em 5 anos:
+                        <span id="fiveYearAvgDividendYield">--</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+        <!-- Indicadores de Endividamento -->
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    Indicadores de Endividamento
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Dívida Total: <span id="totalDebt">--</span></li>
+                    <li class="list-group-item">Dívida sobre Patrimônio: <span
+                            id="debtToEquity">--</span></li>
+                    <li class="list-group-item">Caixa Total: <span id="totalCash">--</span></li>
+                    <li class="list-group-item">Caixa por Ação: <span
+                            id="totalCashPerShare">--</span></li>
+                    <li class="list-group-item">Índice de Liquidez Imediata: <span
+                            id="quickRatio">--</span></li>
+                    <li class="list-group-item">Índice de Liquidez Corrente: <span
+                            id="currentRatio">--</span></li>
+                </ul>
+            </div>
+        </div>
+
+
+        <!-- Indicadores de Eficiência -->
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    Indicadores de Eficiência
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Margem Bruta: <span id="grossMargin">--</span></li>
+                    <li class="list-group-item">Margem Líquida: <span id="profitMargins">--</span></li>
+                    <li class="list-group-item">Margem Operacional (EBIT): <span id="operatingMargins">--</span></li>
+                    <li class="list-group-item">Margem EBITDA: <span id="ebitdaMargins">--</span></li>
+                </ul>
+            </div>
+        </div>
+
+    </div> {# Closing the row #}
+
+    <div class="row">
+
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    Indicadores de Crescimento
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Crescimento dos Lucros: <span id="earningsGrowth">--</span></li>
+                    <li class="list-group-item">Crescimento da Receita: <span id="revenueGrowth">--</span></li>
+                    <li class="list-group-item">Variação de 52 Semanas: <span id="52WeekChange">--</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-header">
+                    Indicadores de Rentabilidade
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Retorno sobre Ativos (ROA): <span id="returnOnAssets">--</span></li>
+                    <li class="list-group-item">Retorno sobre o Patrimônio Líquido (ROE): <span id="returnOnEquity">--</span></li>
+                </ul>
+            </div>
+        </div>
+    </div> {# Closing the second row #}
+</section>
+
 <script>
     // Parsing data from Django template to JS
     const dates = {{ dates| safe }};
@@ -89,7 +190,77 @@
             });
     }
 
-    // Call the function with default range to set min/max values initially
+    function updateFinancialIndicators() {
+        fetch(`/api/get_financial_indicators/{{ ativo.codigo }}/`)
+            .then(response => response.json())
+            .then(data => {
+                // Valuation
+                document.getElementById('marketCap').textContent = formatNumber(data.marketCap) || '--';
+                document.getElementById('enterpriseValue').textContent = formatNumber(data.enterpriseValue) || '--';
+                document.getElementById('trailingPE').textContent = formatDecimal(data.trailingPE);
+                document.getElementById('forwardPE').textContent = formatDecimal(data.forwardPE);
+                document.getElementById('pegRatio').textContent = formatDecimal(data.pegRatio);
+                document.getElementById('priceToSalesTrailing12Months').textContent = formatDecimal(data.priceToSalesTrailing12Months);
+                document.getElementById('priceToBook').textContent = formatDecimal(data.priceToBook);
+                document.getElementById('dividendRate').textContent = formatPercentage(data.dividendRate);
+                document.getElementById('dividendYield').textContent = formatPercentage(data.dividendYield);
+                document.getElementById('fiveYearAvgDividendYield').textContent = formatPercentage(data.fiveYearAvgDividendYield);
+
+                // Endividamento
+                document.getElementById('totalDebt').textContent = formatNumber(data.totalDebt) || '--';
+                document.getElementById('debtToEquity').textContent = formatDecimal(data.debtToEquity);
+                document.getElementById('totalCash').textContent = formatNumber(data.totalCash) || '--';
+                document.getElementById('totalCashPerShare').textContent = formatDecimal(data.totalCashPerShare);
+                document.getElementById('quickRatio').textContent = formatDecimal(data.quickRatio);
+                document.getElementById('currentRatio').textContent = formatDecimal(data.currentRatio);
+
+                // Eficiência
+                document.getElementById('grossMargin').textContent = formatPercentage(data.grossMargin);
+                document.getElementById('profitMargins').textContent = formatPercentage(data.profitMargins);
+                document.getElementById('operatingMargins').textContent = formatPercentage(data.operatingMargins);
+                document.getElementById('ebitdaMargins').textContent = formatPercentage(data.ebitdaMargins);
+
+                // Rentabilidade
+                document.getElementById('returnOnAssets').textContent = formatPercentage(data.returnOnAssets);
+                document.getElementById('returnOnEquity').textContent = formatPercentage(data.returnOnEquity);
+
+                // Crescimento
+                document.getElementById('earningsGrowth').textContent = formatPercentage(data.earningsGrowth);
+                document.getElementById('revenueGrowth').textContent = formatPercentage(data.revenueGrowth);
+                document.getElementById('52WeekChange').textContent = formatPercentage(data['52WeekChange']);
+            });
+    }
+
+    // Helper function to format numbers to two decimal places if they're numbers.
+    function formatDecimal(value) {
+        return (typeof value === "number" ? value.toFixed(2) : '--');
+    }
+
+    function formatNumber(num) {
+        if (num >= 1e12) {
+            return (num / 1e12).toFixed(2) + 'T'; // Trilhões
+        } else if (num >= 1e9) {
+            return (num / 1e9).toFixed(2) + 'B'; // Bilhões
+        } else if (num >= 1e6) {
+            return (num / 1e6).toFixed(2) + 'M'; // Milhões
+        } else if (num >= 1e3) {
+            return (num / 1e3).toFixed(2) + 'K'; // Milhares
+        } else {
+            return num.toFixed(2); // Valor exato
+        }
+    }
+
+    function formatPercentage(value) {
+        if (value === null || value === undefined) {
+            return '--';
+        }
+
+        // Formata o valor como uma porcentagem com duas casas decimais
+        return (value * 100).toFixed(2) + '%';
+    }
+
+
+    updateFinancialIndicators();
     fetchDataAndUpdateChart('1y');
 </script>
 {% endblock %}

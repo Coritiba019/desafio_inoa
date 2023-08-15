@@ -19,8 +19,9 @@ MAPEAMENTO_SETORES = {
     "Healthcare": "HEALTHCARE",
     "Energy": "ENERGY",
     "Communication Services": "COMMUNICATION_SERVICES",
-    
+
 }
+
 
 def index(request):
     if request.user.is_authenticated:
@@ -37,7 +38,7 @@ def index(request):
 
 def detalhes_ativo(request, ativo_id):
     ativo = get_object_or_404(Ativo, pk=ativo_id)
-    
+
     # Fetch data using yfinance
     ticker = yf.Ticker(ativo.codigo + ".SA")
     history = ticker.history(period="1y")  # Get data for 1 year, for instance.
@@ -54,9 +55,11 @@ def detalhes_ativo(request, ativo_id):
 
     return render(request, 'detalhes_ativo.html', context)
 
+
 def novo_ativo(request):
     if not request.user.is_authenticated:
-        messages.error(request, "Você precisa estar logado para adicionar um ativo.")
+        messages.error(
+            request, "Você precisa estar logado para adicionar um ativo.")
         return redirect('login')
 
     form = AtivoForms(request.POST or None)
@@ -71,19 +74,23 @@ def novo_ativo(request):
         if not ticker_data.info:
             messages.error(request, "Erro ao buscar informações do ativo.")
             return redirect('index')
-        
+
         ativo = form.save(commit=False)
         ativo.preco_atual = ticker_data.history(period="1d")['Close'].iloc[0]
         ativo.nome = ticker_data.info.get('longName', None)
-        ativo.setor = MAPEAMENTO_SETORES.get(ticker_data.info.get('sector'), None)
+        ativo.setor = MAPEAMENTO_SETORES.get(
+            ticker_data.info.get('sector'), None)
         ativo.descricao = ticker_data.info.get('longBusinessSummary', None)
         ativo.usuario = request.user
         ativo.save()
-        messages.success(request, f"O Ativo {ativo.codigo} foi adicionado com sucesso!")
+        messages.success(
+            request, f"O Ativo {ativo.codigo} foi adicionado com sucesso!")
     else:
-        messages.error(request, "Erro ao adicionar o ativo. Por favor, tente novamente.")
+        messages.error(
+            request, "Erro ao adicionar o ativo. Por favor, tente novamente.")
 
     return redirect('index')
+
 
 def deletar_ativo(request, ativo_id):
     if request.method == "POST":
@@ -93,19 +100,23 @@ def deletar_ativo(request, ativo_id):
         messages.success(request, f"Ativo {ativo_nome} deletado com sucesso!")
         return redirect('index')
 
+
 def editar_ativo(request, ativo_id):
     ativo = get_object_or_404(Ativo, id=ativo_id)
-    
+
     if request.method == "POST":
         form = AtivoForms(request.POST, instance=ativo)
-        
+
         if form.is_valid():
             form.save()
-            messages.success(request, f"Ativo {ativo.nome} editado com sucesso!")
+            messages.success(
+                request, f"Ativo {ativo.nome} editado com sucesso!")
             return redirect('index')
         else:
-            messages.error(request, "Erro ao editar o ativo. Por favor, tente novamente.")
-        
+            messages.error(
+                request, "Erro ao editar o ativo. Por favor, tente novamente.")
+
+
 def get_ativo_info(request, ativo_id):
     ativo = get_object_or_404(Ativo, id=ativo_id)
     data = {
@@ -116,15 +127,17 @@ def get_ativo_info(request, ativo_id):
     }
     return JsonResponse(data)
 
+
 def test(request):
     checar_cotacoes.delay()
     messages.info(request, "A tarefa de checar cotações foi iniciada.")
     return HttpResponse("Done")
 
+
 def get_updated_ativos(request):
     ativos = Ativo.objects.all()
     data = {}
-    
+
     for ativo in ativos:
         formatted_date = format(ativo.ultima_atualizacao, "d/m/Y H:i")
         data[ativo.id] = {
@@ -134,9 +147,11 @@ def get_updated_ativos(request):
 
     return JsonResponse(data)
 
+
 def is_valid_ticker(ticker):
     pattern = re.compile(r'^[A-Z]{4}.{1,}$')
     return bool(pattern.match(ticker))
+
 
 def get_dates_and_prices_for_range(codigo, range):
     ticker = yf.Ticker(codigo + ".SA")
@@ -144,6 +159,7 @@ def get_dates_and_prices_for_range(codigo, range):
     dates = history.index.strftime('%Y-%m-%d').tolist()
     prices = history['Close'].tolist()
     return dates, prices
+
 
 def get_data(request, codigo, range):
     # Convertir a entrada range em formato yfinance
@@ -155,10 +171,61 @@ def get_data(request, codigo, range):
         "5y": "5y"
     }
 
-    period = period_map.get(range, "1y")  # Default para 1 ano se a entrada não for válida
+    # Default para 1 ano se a entrada não for válida
+    period = period_map.get(range, "1y")
     dates, prices = get_dates_and_prices_for_range(codigo, period)
-    
+
     return JsonResponse({
         'dates': dates,
         'prices': prices
+    })
+
+
+def get_financial_indicators(request, ticker_symbol):
+    ticker = yf.Ticker(ticker_symbol + ".SA")
+
+    # Coletando informações do ticker
+    info = ticker.info
+
+    # Calculando Margem Bruta se os dados estiverem disponíveis
+    gross_margin = None
+    if info.get('grossProfits') and info.get('totalRevenue'):
+        gross_margin = info['grossProfits'] / info['totalRevenue']
+
+    return JsonResponse({
+        # Valuation
+        'marketCap': info.get('marketCap', None),
+        'enterpriseValue': info.get('enterpriseValue', None),
+        'trailingPE': info.get('trailingPE', None),
+        'forwardPE': info.get('forwardPE', None),
+        'priceToSalesTrailing12Months': info.get('priceToSalesTrailing12Months', None),
+        'priceToBook': info.get('priceToBook', None),
+        'dividendRate': info.get('dividendRate', None),
+        'dividendYield': info.get('dividendYield', None),
+        'fiveYearAvgDividendYield': info.get('fiveYearAvgDividendYield', None),
+        'pegRatio': info.get('pegRatio', None),
+
+        # Endividamento
+        'totalDebt': info.get('totalDebt', None),
+        'debtToEquity': info.get('debtToEquity', None),
+        'totalCash': info.get('totalCash', None),
+        'totalCashPerShare': info.get('totalCashPerShare', None),
+        'quickRatio': info.get('quickRatio', None),
+        'currentRatio': info.get('currentRatio', None),
+
+        # Eficiência
+        'grossMargin': gross_margin,
+        'profitMargins': info.get('profitMargins', None),  # Margem Líquida
+        'operatingMargins': info.get('operatingMargins', None),  # Margem EBIT
+        'ebitdaMargins': info.get('ebitdaMargins', None),  # Margem EBITDA
+
+
+        # Rentabilidade
+        'returnOnAssets': info.get('returnOnAssets', None),
+        'returnOnEquity': info.get('returnOnEquity', None),
+
+        # Crescimento
+        'earningsGrowth': info.get('earningsGrowth', None),
+        'revenueGrowth': info.get('revenueGrowth', None),
+        '52WeekChange': info.get('52WeekChange', None),
     })
