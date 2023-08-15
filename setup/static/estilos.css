@@ -54,11 +54,12 @@ input[type=checkbox]:focus {
 
 [data-bs-theme="dark"] {
   color: white;
-  .nav-link, .card-body, .offcanvas, .accordion, .btn {
+  .nav-link, .card-body, .offcanvas, .accordion, .btn, .card-header, .list-group {
     --bs-nav-link-color: white;
     --bs-card-color: white;
     --bs-offcanvas-color: white;
     --bs-body-color: white;
     --bs-body-color: white;
+    --bs-card-cap-color: white;
   }
 }
