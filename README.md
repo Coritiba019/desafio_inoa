@@ -23,7 +23,9 @@ sudo apt install redis-server
 https://github.com/tporadowski/redis/releases
 ```
 
-Para verificar se o Redis foi instalado corretamente, execute:
+### Baixe o arquivo "Redis-x64-5.0.14.1.msi" e faça a instalação
+
+### Para verificar se o Redis foi instalado corretamente, execute:
 ```
 $ redis-cli ping
 PONG
