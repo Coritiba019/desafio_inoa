@@ -6,11 +6,28 @@
 
 Antes de começar, verifique se você possui os seguintes requisitos instalados em seu sistema:
 
-1. Python (versão 3.6 ou superior)
-2. Git
-3. Redis server
+1. [Python](https://www.python.org/downloads/)
+2. [Git](https://git-scm.com/downloads)
+3. [Redis server - Windows](https://github.com/tporadowski/redis/releases)
 
 # 📥 Instalação
+
+## Instalação do Redis no Linux (Ubuntu)
+```
+sudo apt update
+sudo apt install redis-server
+```
+
+## Instalação do Redis no Windows
+```
+https://github.com/tporadowski/redis/releases
+```
+
+Para verificar se o Redis foi instalado corretamente, execute:
+```
+$ redis-cli ping
+PONG
+```
 
 ## Clone o projeto
 ```
@@ -54,23 +71,33 @@ pip install -r requirements.txt
 ```
 
 ## Configuração do Banco de Dados
+
+### No Windows
+```
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### No Linux
 ```
 python3 manage.py makemigrations
 python3 manage.py migrate
 ```
 
+
 ## Gere a Secret Key
+
+### No Windows
+```
+python secret_key_generator.py
+```
+
+### No Linux
 ```
 python3 secret_key_generator.py
 ```
 
 Após a geração da key, copie o conteúdo do .env.example para um novo arquivo chamado .env.
-
-## Instalação do Redis no Linux (Ubuntu)
-```
-sudo apt update
-sudo apt install redis-server
-```
 
 # 🚀 Execução
 
