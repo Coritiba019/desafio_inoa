@@ -16,26 +16,40 @@ def checar_cotacoes(self):
             ticker_data = yf.Ticker(ativo.codigo + ".SA")
 
             try:
-                preco_atual = ticker_data.history(period="1d")['Close'].iloc[0]
+                daily_data = ticker_data.history(period="2d")  # Pega os dados dos últimos 2 dias.
+                current_close = daily_data['Close'].iloc[-1]
+                
+                # Se temos pelo menos 2 dias de dados, pegamos o fechamento do dia anterior.
+                if len(daily_data) > 1:
+                    previous_close = daily_data['Close'].iloc[-2]
+                else:
+                    previous_close = 0
+                
             except IndexError:
                 continue
 
-            ativo.preco_atual = preco_atual
+            # Calculando a variação percentual com base no preço de fechamento anterior e no preço de fechamento atual.
+            if previous_close != 0:
+                ativo.variacao_preco = ((current_close - previous_close) / previous_close) * 100
+            else:
+                ativo.variacao_preco = 0
+
+            ativo.preco_atual = current_close
             ativo.ultima_atualizacao = agora
 
-            user_email = ativo.usuario.email  # Extracting the email of the user associated with the asset
+            user_email = ativo.usuario.email  # Extraindo o e-mail do usuário associado ao ativo.
 
-            # Check if the price is outside the limits
-            if preco_atual < ativo.limite_inferior:
+            # Verificando se o preço está fora dos limites.
+            if current_close < ativo.limite_inferior:
                 send_notification_email(
                     subject='Notificação de Compra',
-                    message=f'O preço de {ativo.codigo} caiu abaixo do limite! Atual: {preco_atual:.2f}, Limite: {ativo.limite_inferior}. Considere comprar.',
+                    message=f'O preço de {ativo.codigo} caiu abaixo do limite! Atual: {current_close:.2f}, Limite: {ativo.limite_inferior}. Considere comprar.',
                     email=user_email
                 )
-            elif preco_atual > ativo.limite_superior:
+            elif current_close > ativo.limite_superior:
                 send_notification_email(
                     subject='Notificação de Venda',
-                    message=f'O preço de {ativo.codigo} subiu acima do limite! Atual: {preco_atual:.2f}, Limite: {ativo.limite_superior}. Considere vender.',
+                    message=f'O preço de {ativo.codigo} subiu acima do limite! Atual: {current_close:.2f}, Limite: {ativo.limite_superior}. Considere vender.',
                     email=user_email
                 )
 

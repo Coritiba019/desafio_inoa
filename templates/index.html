@@ -29,7 +29,13 @@ B3Alerta - Home
         </a>
         <div class="card-body">
           <h5 class="card-title">{{ ativo.get_setor_display }}</h5>
-          <p class="card-text fw-bold">R$ {{ ativo.preco_atual }}</p>
+          <p class="card-text fw-bold display-6">
+            R$ {{ ativo.preco_atual }}
+            <span
+              class="{% if ativo.variacao_preco > 0 %}text-success{% elif ativo.variacao_preco < 0 %}text-danger{% else %}text-white{% endif %}">
+              ({{ ativo.variacao_preco }}%)
+            </span>
+          </p>
           <!-- Campo para mostrar a última atualização -->
           <p class="card-text text-muted">Última atualização: {{ ativo.ultima_atualizacao|date:"d/m/Y H:i" }}</p>
           <a href="#" class="btn btn-primary" data-ativo-id="{{ativo.id}}" data-bs-toggle="modal"
@@ -52,7 +58,7 @@ B3Alerta - Home
         <div class="card-body text-center">
           <h5 class="card-title">Adicionar Ativo</h5>
           <p class="card-text">Clique para adicionar um novo ativo à sua lista.</p>
-          <p><i class="bi bi-arrow-down"></i></p>
+          <p><i class="bi bi-arrow-down" style="font-size: 2em;"></i></p>
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAtivoModal">
             Adicionar
           </button>
@@ -181,7 +187,7 @@ B3Alerta - Home
             // Atualizar o preço
             const priceElement = ativoElement.querySelector('.card-text.fw-bold');
             if (priceElement) {
-              priceElement.textContent = `R$ ${ativoData.preco_atual}`;
+              priceElement.innerHTML = `R$ ${ativoData.preco_atual} <span class="${ativoData.variacao_preco > 0 ? 'text-success' : ativoData.variacao_preco < 0 ? 'text-danger' : 'text-white'}">(${ativoData.variacao_preco}%)</span>`;
             }
 
             // Atualizar a data da última atualização
@@ -193,7 +199,8 @@ B3Alerta - Home
         }
       });
   }
+
   // Chame essa função a cada minuto
-  setInterval(fetchUpdatedAtivosData, 10000);
+  setInterval(fetchUpdatedAtivosData, 5000);
 </script>
 {% endblock %}

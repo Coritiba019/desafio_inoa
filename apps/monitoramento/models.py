@@ -21,6 +21,7 @@ class Ativo(models.Model):
     codigo = models.CharField(max_length=10, unique=True, help_text="Código do Ativo, e.g., WEGE3")
     nome = models.CharField(max_length=100, help_text="Nome completo do Ativo")
     preco_atual = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0.00)
+    variacao_preco = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0.00)
     setor = models.CharField(max_length=100, choices=OPCOES_SETOR, default='', help_text="setor ao qual o ativo pertence")
     descricao = models.TextField(blank=True, null=True, help_text="Descrição adicional ou detalhes sobre o ativo")
     limite_inferior = models.DecimalField(max_digits=10, decimal_places=2, help_text="", null=True, blank=True)

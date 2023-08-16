@@ -78,18 +78,33 @@ def novo_ativo(request):
             return redirect('index')
 
         ativo = form.save(commit=False)
-        ativo.preco_atual = ticker_data.history(period="1d")['Close'].iloc[0]
+
+        # Pegando dados dos últimos 2 dias
+        daily_data = ticker_data.history(period="2d")
+        
+        if daily_data.shape[0] == 2:  # Certificando-se de que temos dados para os dois dias
+            previous_close = daily_data['Close'].iloc[0]
+            current_close = daily_data['Close'].iloc[1]
+            
+            # Calculando a variação percentual baseado no fechamento do dia anterior e no atual
+            if previous_close != 0:
+                percent_variation = ((current_close - previous_close) / previous_close) * 100
+                ativo.variacao_preco = percent_variation
+            else:
+                ativo.variacao_preco = 0
+        else:
+            messages.error(request, "Dados insuficientes para calcular a variação do preço.")
+            return redirect('index')
+
+        ativo.preco_atual = current_close
         ativo.nome = ticker_data.info.get('longName', None)
-        ativo.setor = MAPEAMENTO_SETORES.get(
-            ticker_data.info.get('sector'), None)
+        ativo.setor = MAPEAMENTO_SETORES.get(ticker_data.info.get('sector'), None)
         ativo.descricao = ticker_data.info.get('longBusinessSummary', None)
         ativo.usuario = request.user
         ativo.save()
-        messages.success(
-            request, f"O Ativo {ativo.codigo} foi adicionado com sucesso!")
+        messages.success(request, f"O Ativo {ativo.codigo} foi adicionado com sucesso!")
     else:
-        messages.error(
-            request, "Erro ao adicionar o ativo. Por favor, tente novamente.")
+        messages.error(request, "Erro ao adicionar o ativo. Por favor, tente novamente.")
 
     return redirect('index')
 
@@ -153,7 +168,8 @@ def get_updated_ativos(request):
         formatted_date = format(ativo.ultima_atualizacao, "d/m/Y H:i")
         data[ativo.id] = {
             'preco_atual': ativo.preco_atual,
-            'ultima_atualizacao': f"Última atualização: {formatted_date}"
+            'ultima_atualizacao': f"Última atualização: {formatted_date}",
+            'variacao_preco': ativo.variacao_preco
         }
 
     return JsonResponse(data)
