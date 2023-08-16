@@ -35,8 +35,10 @@ def index(request):
 
     return render(request, 'index.html', {'cards': ativos, 'form': form})
 
-
 def detalhes_ativo(request, ativo_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
     ativo = get_object_or_404(Ativo, pk=ativo_id)
 
     # Fetch data using yfinance
@@ -93,6 +95,11 @@ def novo_ativo(request):
 
 
 def deletar_ativo(request, ativo_id):
+    if not request.user.is_authenticated:
+        messages.error(
+            request, "Você precisa estar logado para deletar um ativo.")
+        return redirect('login')
+    
     if request.method == "POST":
         ativo = get_object_or_404(Ativo, id=ativo_id)
         ativo_nome = ativo.nome
@@ -102,6 +109,10 @@ def deletar_ativo(request, ativo_id):
 
 
 def editar_ativo(request, ativo_id):
+    if not request.user.is_authenticated:
+        messages.error(
+            request, "Você precisa estar logado para editar um ativo.")
+        return redirect('login')
     ativo = get_object_or_404(Ativo, id=ativo_id)
 
     if request.method == "POST":
