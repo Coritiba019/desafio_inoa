@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
+
+{% block title %}
+B3Alerta - Cadastro
+{% endblock title %}
+
 {% block content %}
 <section class="container d-flex flex-column" style="margin-top: 150px;">
     <form action="{% url 'cadastro' %}" method="POST">

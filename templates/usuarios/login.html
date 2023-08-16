@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
+
+{% block title %}
+B3Alerta - Login
+{% endblock title %}
+
 {% block content %}
 <section class="container d-flex flex-column" style="margin-top: 150px;">
     <form action="{% url 'login' %}" method="POST" class="bg-dark p-5 rounded">
