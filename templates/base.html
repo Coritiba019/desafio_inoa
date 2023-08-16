@@ -66,6 +66,29 @@
         });
     </script>
     {% endif %}
+    <script>
+        // Verificar e aplicar o tema atual no localStorage imediatamente
+        var currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            document.body.setAttribute('data-bs-theme', currentTheme);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Pegar a referência do switch
+            var switchElement = document.getElementById('modo-noturno');
+
+            // Ajustar o estado do switch baseado no tema atual
+            switchElement.checked = (currentTheme === 'dark');
+
+            // Adicionar um ouvinte de evento ao switch
+            switchElement.addEventListener('change', function () {
+                var theme = switchElement.checked ? 'dark' : 'light';
+                document.body.setAttribute('data-bs-theme', theme);
+                localStorage.setItem('theme', theme);
+            });
+        });
+
+    </script>
 </body>
 
 </html>
