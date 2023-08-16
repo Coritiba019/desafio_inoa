@@ -123,4 +123,7 @@ celery -A setup worker -l INFO --pool=solo
 
 ### 🌐 Agora, você pode acessar o projeto pelo seu navegador no endereço http://localhost:8000/.
 
+![Descrição da Imagem](https://github.com/Coritiba019/desafio_inoa/tree/main/static/assets/bg-readme.png)
+
+
 ### 💡 Dica: Mantenha os terminais abertos enquanto estiver usando o projeto. Para encerrar, pressione Ctrl+C.
